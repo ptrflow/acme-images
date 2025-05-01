@@ -1,0 +1,22 @@
+FROM rockylinux:9.3 AS dev
+LABEL role=development
+
+RUN dnf install -y epel-release \ 
+    && dnf install -y gcc-c++ \
+                gdb \
+                make \
+                automake \
+                autoconf \
+                cmake \
+                git \
+                python3.12 \
+                nmon \
+                nc \
+                wget \
+                vim \
+                && dnf clean all
+
+WORKDIR /root
+
+
+CMD ["/bin/bash"]
