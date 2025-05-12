@@ -14,9 +14,24 @@ RUN dnf install -y epel-release \
                 nc \
                 wget \
                 vim \
-                && dnf clean all
+                openssh-server \
+                passwd \
+                sudo \
+                procps-ng \
+                lz4 \
+                net-tools \
+                && dnf clean all \
+    && echo "alias ll='ls -hil'" >> /etc/bashrc && \
+        ssh-keygen -A && \
+        sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+        sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
+        sed -i 's/^#\?PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+        mkdir -p ~/.ssh && chmod 700 ~/.ssh && cd ~/.ssh && touch authorized_keys && chmod 600 authorized_keys && \
+        echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCs7OaS7vjrWWh/mO7mf562epwTavs9GcS4D4GFY9dOnhWQWvBarVfXGGTYOnK5SZ2MFVMloTtgCk06AVRI0c9sxGdNkRtOym7vL7yxwugmXEMoR9mqaLLVn8KbVNShxsb3PeH+iM2TjyiStq0iLWmKN3J+5yLXZK+ZEDrRvFBkRMvO05K6i7amxESstXECxEmsiJGiSjD5y1o03YOoa1tIieR5apvAzBmM6lcpi37nEHd7UXTs4zuEz6ov0vOx1DHPy32hqx1qknOHLi2wSrhNeEXafv1V2fcGtYAOTzAE3kiBK0+Tsv/6ecNbBkK7x4jBTyKLP6+5NrFvEoT1IoVL" >> authorized_keys
+
+
 
 WORKDIR /root
 
-
-CMD ["/bin/bash"]
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
